@@ -88,6 +88,7 @@ listGallery.addEventListener('click', galleryClick);
 
 function galleryClick(event) {
   event.preventDefault();
+  
   if (event.target.nodeName !== 'IMG') {
     return;
   }
