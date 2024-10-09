@@ -73,7 +73,7 @@ const img = images
           <a class="gallery-link" href="${original}">
             <img
               class="gallery-image"
-              src="${preview}" 
+              src="${preview}"
               data-source="${original}"
               alt="${description}"
             />
@@ -92,13 +92,37 @@ function galleryClick(event) {
   if (event.target.nodeName !== 'IMG') {
     return;
   }
-  imageClick(event.target);
+  openModal(event.target.dataset.source);
 }
 
-function imageClick(image) {
-  const instance = basicLightbox.create(`
-    <img src="${image.dataset.source}">
-`);
+document.addEventListener('keydown', galleryKeydown);
+
+function galleryKeydown(event) {
+  const isOpenModal = document.querySelector('.basicLightbox'); // перевірка, чи модальне вікно відкрите
+  if (['Enter', 'NumpadEnter', 'Space'].includes(event.code) && !isOpenModal) {
+    const img = event.target.querySelector('img');
+    if (img) {
+      openModal(img.dataset.source);
+    }
+  }
+}
+
+function openModal(image) {
+  const instance = basicLightbox.create(
+    `
+    <img src="${image}">
+`,
+    {
+      onShow: () => document.addEventListener('keydown', closeModal),
+      onClose: () => document.removeEventListener('keydown', closeModal),
+    }
+  );
 
   instance.show();
+
+  function closeModal(event) {
+    if (event.code === 'Escape') {
+      instance.close();
+    }
+  }
 }
